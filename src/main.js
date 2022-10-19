@@ -34,17 +34,31 @@ export const signIn = async (page) => {
 
 }
 
+const getParsedComment = async (commentElement) => {
+    return await commentElement.evaluate(e => e.innerText)
+}
+
 export const getComments = async (page) => {
+    await waitFor(1000)
+    
     const elements = await page.$x(".//div[starts-with(@aria-label, 'Commentaire de')]")
-    //console.log('comments', elements)
-    const first = elements[0]
-    console.log(first)
+
+    const comments = await Promise.all(elements.map(getParsedComment))
+
+    console.log('#', elements.length)//, '#', comments)
+    return
+}
+
+export const scrollDown = async (page) => {
+
+    const text = ` VOTEZ POUR VOTRE ASSOCIATION PRÉFÉRÉE, POUR LUI PERMETTRE DE REMPORTER JUSQU'À 150 000 € DE DONS DE PRODUITS, EN INDIQUANT SON NOM EN COMMENTAIRE `
+    const scrollerElement = await page.$x(`//*[contains(text(), "${text}")]/../..`)
+    console.log('scrolleElement', scrollerElement)
+
+    scrollerElement[0].click()
     
-    const xpath = './/span[@dir="auto" and @lang="fr"]'
-    const comment = await first.$x(xpath)
-    const text = await page.evaluate(el => el.textContent, comment)
-    console.log('#comment', text)
-    
+    await autoScroll(page)
+
 }
 
 export const acceptCookies = async (page) => {
@@ -80,11 +94,11 @@ export const setFilterToAllComments = async (page) => {
     await btnElement2[0].click()
 }
 
-export const displayMoreComments = async (page) => {
+export const clickOnMoreComments = async (page) => {
     const btnSelector = './/*[contains(text(), "Voir plus de commentaires")]'
     await waitFor(1000)
     const btnElement = await page.$x(btnSelector)
-    console.log('#btnEleemnt3', btnElement)
+    //console.log('#btnEleemnt3', btnElement)
     await btnElement[0].click()
 }
 
@@ -95,39 +109,21 @@ export const waitFor = async (timeout = 2000) => (
 )
 
 
+async function autoScroll(page){
+    await page.evaluate(async () => {
+        await new Promise((resolve) => {
+            var totalHeight = 0;
+            var distance = 100;
+            var timer = setInterval(() => {
+                var scrollHeight = document.body.scrollHeight;
+                window.scrollBy(0, distance);
+                totalHeight += distance;
 
-
-/*
-
-const getHref = (page, selector) =>
-  page.evaluate(
-    selector => document.querySelector(selector).getAttribute('href'),
-    selector
-)
-
-    await page.waitFor(10000)
-
-    await page.waitForSelector('div form div:nth-child(2) input')
-    await page.click('div form div:nth-child(2) input')
-    await page.keyboard.press('Enter')
-
-    await page.waitFor(5000)
-    await page.waitForSelector(
-      '#main > div #center_col #search > div > div > div'
-    )
-    const url = await getHref(
-      page,
-      `#main > div #center_col #search > div > div > div a`
-    )
-
-    await page.goto(url, { waitUntil: 'domcontentloaded' })
-
-    await page.screenshot({
-      fullPage: true,
-      path: 'new_image.png'
-    })
-    const screenshotPath = process.cwd() + '/new_image.png'
-
-    console.log('URL of the page:', url)
-    console.log('Location of the screenshot:', screenshotPath)
-    */
+                if(totalHeight >= scrollHeight - window.innerHeight){
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 100);
+        });
+    });
+}
