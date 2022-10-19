@@ -1,9 +1,19 @@
 import dotenv from "dotenv"
+import * as fs from 'async-file'
 
 dotenv.config()
 
 export const facebookPostUrl = 'https://www.facebook.com/Donnez.org/photos/a.130934921764614/656318052559629'
 
+export const writeFile = async (textContent, filename = 'output.txt') => {
+    await fs.appendFile(filename, textContent)
+
+    const data = await fs.readTextFile(filename)
+    const textData = data.toString().split('\n')
+    const noDuplicates = [...new Set(textData)]
+    await fs.writeFile(filename, noDuplicates.join('\n'))
+
+}
 
 export const signIn = async (page) => {
     
@@ -35,18 +45,23 @@ export const signIn = async (page) => {
 }
 
 const getParsedComment = async (commentElement) => {
-    return await commentElement.evaluate(e => e.innerText)
+    return await commentElement.evaluate(e => (
+            e.innerText.replaceAll(/^\s+|\s+$/gm, "").replaceAll('\n', ';')
+        )
+    )
 }
 
 export const getComments = async (page) => {
     await waitFor(1000)
-    
+
     const elements = await page.$x(".//div[starts-with(@aria-label, 'Commentaire de')]")
 
     const comments = await Promise.all(elements.map(getParsedComment))
 
-    console.log('#', elements.length)//, '#', comments)
-    return
+    console.log('#', elements.length)//, comments)
+
+    await writeFile(comments.join('\n'))
+
 }
 
 export const scrollDown = async (page) => {
@@ -112,18 +127,18 @@ export const waitFor = async (timeout = 2000) => (
 async function autoScroll(page){
     await page.evaluate(async () => {
         await new Promise((resolve) => {
-            var totalHeight = 0;
-            var distance = 100;
+            var totalHeight = 0
+            var distance = 100
             var timer = setInterval(() => {
-                var scrollHeight = document.body.scrollHeight;
-                window.scrollBy(0, distance);
-                totalHeight += distance;
+                var scrollHeight = document.body.scrollHeight
+                window.scrollBy(0, distance)
+                totalHeight += distance
 
                 if(totalHeight >= scrollHeight - window.innerHeight){
-                    clearInterval(timer);
-                    resolve();
+                    clearInterval(timer)
+                    resolve()
                 }
-            }, 100);
-        });
-    });
+            }, 100)
+        })
+    })
 }

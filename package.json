@@ -8,6 +8,8 @@
         "start": "node src/index.js"
     },
     "dependencies": {
+        "@types/node": "^18.11.2",
+        "async-file": "^2.0.2",
         "dotenv": "^16.0.3",
         "puppeteer": "^19.0.0"
     },

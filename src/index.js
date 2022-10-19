@@ -4,7 +4,7 @@ import { signIn, acceptCookies, getComments, waitFor, facebookPostUrl, setFilter
 
 async function loop (page) {
     try {
-        await waitFor(2000)
+        await waitFor(1000)
         await scrollDown(page)
         await clickOnMoreComments(page)
         await getComments(page)
@@ -19,7 +19,7 @@ async function loop (page) {
 
 async function main () {
     
-    const browser = await puppeteer.launch({ headless: false, slowMo: 100, devtools: false, defaultViewport: null, args: [`--window-size=1920,1080`, "--disable-notifications"] })
+    const browser = await puppeteer.launch({ headless: true, slowMo: 100, devtools: false, defaultViewport: null, args: [`--window-size=1920,1080`, "--disable-notifications"] })
     
     const page = await browser.newPage()
 
@@ -46,7 +46,7 @@ async function main () {
     catch (error) {
 
         console.log(error)
-        //await browser.close()
+        await browser.close()
     }
 }
 
