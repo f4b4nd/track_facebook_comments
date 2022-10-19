@@ -1,12 +1,9 @@
-export const initPage = async (browser) => {
-    
-    const page = await browser.newPage()
+import dotenv from "dotenv"
 
-    await page.setViewport({ width: 1199, height: 900 })
+dotenv.config()
 
-    return page
+export const facebookPostUrl = 'https://www.facebook.com/Donnez.org/photos/a.130934921764614/656318052559629'
 
-}
 
 export const signIn = async (page) => {
     
@@ -52,27 +49,50 @@ export const getComments = async (page) => {
 
 export const acceptCookies = async (page) => {
     try {
-        const btn1 = await page.waitForSelector('button[title="Autoriser les cookies essentiels et optionnels"]', {timeout: 2000})
-        if (btn1) {
-            await page.click('button[title="Autoriser les cookies essentiels et optionnels"]')
-            return
-        }
-        else {
-            const btnElement = await page.waitForXPath('.//*[contains(text(), "Autoriser les cookies essentiels et optionnels")]', {timeout: 2000})
-            if (btnElement.length > 0) {
-                //console.log('btnE', btnElement)
-                await page.click(btnElement)
-            }
-        }
-    
-
-    } catch (e){
-            console.log('error', e)
+        const btnSelector = 'button[title="Autoriser les cookies essentiels et optionnels"]'
+        const btnElement = await page.waitForSelector(btnSelector, {timeout: 2000})
+        await page.click(btnElement)
         
+    } catch {
+    
+        try {
+            const btnSelector = '//*[contains(text(), "Autoriser les cookies essentiels et optionnels")]'
+            const btnElement = await page.$x(btnSelector)
+            // always click on right button
+            await btnElement[1].click()
+
+        } catch(e) {
+            console.log(e)
+        }
     }
 
-
 }
+
+export const setFilterToAllComments = async (page) => {
+    const btnSelector1 = './/*[contains(text(), "Plus pertinents")]'
+    const btnElement1 = await page.$x(btnSelector1)
+    console.log('#btnEleemnt1', btnElement1)
+    await btnElement1[0].click()
+
+    const btnSelector2 = '//*[contains(text(), "Affichez tous les commentaires, y compris ceux étant potentiellement indésirables. Les commentaires les plus pertinents apparaîtront en premier.")]'
+    const btnElement2 = await page.$x(btnSelector2)
+    console.log('#btnEleemnt2', btnElement2)
+    await btnElement2[0].click()
+}
+
+export const displayMoreComments = async (page) => {
+    const btnSelector = './/*[contains(text(), "Voir plus de commentaires")]'
+    await waitFor(1000)
+    const btnElement = await page.$x(btnSelector)
+    console.log('#btnEleemnt3', btnElement)
+    await btnElement[0].click()
+}
+
+export const waitFor = async (timeout = 2000) => (
+    await new Promise(
+        function(resolve) { setTimeout(resolve, timeout) }
+    )
+)
 
 
 
