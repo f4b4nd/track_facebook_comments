@@ -1,13 +1,17 @@
 import puppeteer from "puppeteer"
 
-import { signIn, acceptCookies, getComments, waitFor, facebookPostUrl, setFilterToAllComments, clickOnMoreComments, scrollDown } from "./main.js"
+import { signIn, acceptCookies} from "./session.js"
+
+import { getComments, waitFor, facebookPostUrl, setFilterToAllComments, clickOnMoreComments, scrollDown } from "./main.js"
+
+const OUTPUT_PATH = './data/output-t0.txt'
 
 async function loop (page) {
     try {
         await waitFor(1000)
         await scrollDown(page)
         await clickOnMoreComments(page)
-        await getComments(page)
+        await getComments(page, OUTPUT_PATH)
 
         await loop(page)
 
@@ -25,7 +29,7 @@ async function main () {
 
     try {
 
-        await signIn(page)
+        //await signIn(page)
 
         await page.goto(facebookPostUrl, { waitUntil: 'domcontentloaded' })
 
@@ -34,7 +38,7 @@ async function main () {
         await setFilterToAllComments(page)
         
         await clickOnMoreComments(page)        
-        await getComments(page)
+        await getComments(page, OUTPUT_PATH)
 
         await loop(page)
 
