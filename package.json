@@ -1,0 +1,17 @@
+{
+    "name": "facebook-scrape",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "main": "node src/index.js"
+    },
+    "dependencies": {
+        "dotenv": "^16.0.3",
+        "puppeteer": "^19.0.0"
+    },
+    "devDependencies": {
+        "eslint": "^8.25.0"
+    }
+}
