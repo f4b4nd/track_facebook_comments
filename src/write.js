@@ -27,11 +27,14 @@ export const cleanText = async (textContent) => {
         .replaceAll(";J’aime", ";").replaceAll("J’aime;", ";")
         .replaceAll(";Suivre", ";").replaceAll("Suivre;", ";")
         .replaceAll("Modifié", ";")
-        .replaceAll("En ligne;", ";")
         .replaceAll(";Répondre", ";").replaceAll("Répondre;", ";")
+        .replaceAll("En ligne;", ";")
         .replaceAll(";·;", ";")
         .replaceAll("Voir la traduction", "")
         .replaceAll(/;\d+\s(j|h|min)/gm, ";")
         .replaceAll(/;\d+;/gm, ";")
+        .replaceAll(/Juliette\sCazenave;CITHEA;/gm, ";")
         .replaceAll(/;+/gm, ";")
+        .replaceAll(/^;\n/gm, "")
+        + '\nJuliette Cazenave;CITHEA;'
 }
