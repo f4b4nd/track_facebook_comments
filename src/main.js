@@ -1,4 +1,3 @@
-import { writeFile } from "./write.js"
 
 import dotenv from "dotenv"
 
@@ -14,17 +13,13 @@ const getParsedComment = async (commentElement) => {
     )
 }
 
-export const getComments = async (page, filename) => {
+export const getComments = async (page) => {
 
     await waitFor(1000)
 
     const elements = await page.$x(".//div[starts-with(@aria-label, 'Commentaire de')]")
 
-    const comments = await Promise.all(elements.map(getParsedComment))
-
-    console.log('#', elements.length)//, comments)
-
-    await writeFile(comments.join('\n'), filename)
+    return await Promise.all(elements.map(getParsedComment))    
 
 }
 
@@ -67,17 +62,17 @@ export const waitFor = async (timeout = 2000) => (
 )
 
 
-async function autoScroll(page){
+export const autoScroll = async (page) => {
     await page.evaluate(async () => {
         await new Promise((resolve) => {
-            var totalHeight = 0
-            var distance = 100
-            var timer = setInterval(() => {
+            let totalHeight = 0
+            const distance = 100
+            const timer = setInterval(() => {
                 var scrollHeight = document.body.scrollHeight
                 window.scrollBy(0, distance)
                 totalHeight += distance
 
-                if(totalHeight >= scrollHeight - window.innerHeight){
+                if (totalHeight >= scrollHeight - window.innerHeight) {
                     clearInterval(timer)
                     resolve()
                 }

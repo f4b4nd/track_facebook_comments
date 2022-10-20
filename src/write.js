@@ -31,10 +31,12 @@ export const cleanText = async (textContent) => {
         .replaceAll("En ligne;", ";")
         .replaceAll(";·;", ";")
         .replaceAll("Voir la traduction", "")
+        .replaceAll(/"|«|»/gm, "")
         .replaceAll(/;\d+\s(j|h|min)/gm, ";")
         .replaceAll(/;\d+;/gm, ";")
         .replaceAll(/Juliette\sCazenave;CITHEA;/gm, ";")
         .replaceAll(/;+/gm, ";")
         .replaceAll(/^;\n/gm, "")
+        .replaceAll(/(?<=;.*);/gm, " ") // all ; except first
         + '\nJuliette Cazenave;CITHEA;'
 }
