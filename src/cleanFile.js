@@ -1,4 +1,4 @@
-import { cleanFile } from "./write.js"
+import { cleanFile } from "./fileManager.js"
 
 
 (async () => {

@@ -1,36 +1,16 @@
 import puppeteer from "puppeteer"
 
-import { writeFile } from "./write.js"
+import { facebookPostUrl } from "./constants.js"
+import { writeFile } from "./fileManager.js"
+import { signIn } from "./authentification.js"
+import { getComments, waitFor, logMessageAsync } from "./main.js"
+import { clickOnAcceptCookies, clickOnDisplayAllComments, clickOnMoreComments, scrollDown } from "./userInteractions.js"
 
-import { signIn, acceptCookies} from "./session.js"
-
-import { getComments, waitFor, facebookPostUrl, setFilterToAllComments, clickOnMoreComments, scrollDown } from "./main.js"
-
-const OUTPUT_PATH = './data/output-v2.txt'
-
-async function loop (page) {
-    try {
-        await waitFor(1000)
-
-        await scrollDown(page)
-        
-        await clickOnMoreComments(page)
-
-        const comments = await getComments(page)
-        console.log(comments.length)
-        await writeFile(comments.join('\n'), OUTPUT_PATH)
-
-        await loop(page)
-
-    } catch (e) {
-        console.log(e)
-    }
-
-}
+const OUTPUT_PATH = './data/output-v0.txt'
 
 async function main () {
     
-    const browser = await puppeteer.launch({ headless: true, slowMo: 100, devtools: false, defaultViewport: null, args: [`--window-size=1920,1080`, "--disable-notifications"] })
+    const browser = await puppeteer.launch({ headless: false, slowMo: 100, devtools: false, defaultViewport: null, args: [`--window-size=1920,1080`, "--disable-notifications"] })
     
     const page = await browser.newPage()
 
@@ -39,19 +19,11 @@ async function main () {
         await signIn(page)
 
         await page.goto(facebookPostUrl, { waitUntil: 'domcontentloaded' })
+        await clickOnAcceptCookies(page)
+        await clickOnDisplayAllComments(page)
 
-        await acceptCookies(page)
-        
-        await setFilterToAllComments(page)
-        
-        // first iteration
-        await clickOnMoreComments(page)        
-        const comments = await getComments(page)
-        console.log(comments.length)
-        await writeFile(comments.join('\n'), OUTPUT_PATH)
-
-        // next iterations
-        await loop(page)
+        // iterates crawling
+        await crawlComments(page)
 
         await page.close()
         await browser.close()
@@ -63,6 +35,33 @@ async function main () {
         console.log(error)
         await browser.close()
     }
+}
+
+async function crawlComments (page) {
+    try {
+        
+        await waitFor(500)
+        await logMessageAsync('scrolling down...')
+        await scrollDown(page)
+
+        await logMessageAsync('clicking on more comments...')
+        await clickOnMoreComments(page)
+
+        await logMessageAsync('getting comments...')
+        const comments = await getComments(page)
+        await logMessageAsync(comments.length)
+
+        await logMessageAsync('get comments ok')
+
+        await writeFile(comments.join('\n'), OUTPUT_PATH)
+
+        // next-iteration
+        await crawlComments(page)
+
+    } catch (e) {
+        console.log(e)
+    }
+
 }
 
 main()

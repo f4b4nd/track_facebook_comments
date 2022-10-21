@@ -1,3 +1,8 @@
+import dotenv from "dotenv"
+import { clickOnAcceptCookies } from "./userInteractions.js"
+
+dotenv.config()
+
 export const signIn = async (page) => {
     
     const url = 'https://www.facebook.com'
@@ -15,7 +20,7 @@ export const signIn = async (page) => {
 
     await page.goto(url)
 
-    await acceptCookies(page)
+    await clickOnAcceptCookies(page)
 
     await page.focus(emailBtnSelector)
     await page.keyboard.type(login)
@@ -27,23 +32,3 @@ export const signIn = async (page) => {
 
 }
 
-export const acceptCookies = async (page) => {
-    try {
-        const btnSelector = 'button[title="Autoriser les cookies essentiels et optionnels"]'
-        const btnElement = await page.waitForSelector(btnSelector, {timeout: 2000})
-        await page.click(btnElement)
-        
-    } catch {
-    
-        try {
-            const btnSelector = '//*[contains(text(), "Autoriser les cookies essentiels et optionnels")]'
-            const btnElement = await page.$x(btnSelector)
-            // always click on right button
-            await btnElement[1].click()
-
-        } catch(e) {
-            console.log(e)
-        }
-    }
-
-}

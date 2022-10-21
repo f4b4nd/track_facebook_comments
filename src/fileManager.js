@@ -1,10 +1,14 @@
 import * as fs from 'async-file'
+import { logMessageAsync } from './main.js'
 
 export const writeFile = async (textContent, filename) => {
     
+    await logMessageAsync('appending to file...')
     await fs.appendFile(filename, textContent)
 
+    await logMessageAsync('cleaning file...')
     await cleanFile(filename)
+    await logMessageAsync('clean file ok')
 
 }
 

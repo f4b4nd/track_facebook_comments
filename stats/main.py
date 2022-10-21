@@ -54,25 +54,25 @@ def get_comments(datas: list) -> list:
     get_second_column = lambda x: re.sub("^.*;", "", x)
     return [get_second_column(data) for data in datas]
 
-def get_match (text: str, database: list) -> str:
+def get_closest_match (text: str, database: list) -> str:
     matches = difflib.get_close_matches(text, database, 1, 0.1)
     if len(matches) == 0:
         return ""
     return matches[0]
 
-def get_matches(comments: list) -> dict:
-    normalized_database = [get_normalized_text(db) for db in DATABASE]
+def get_grouped_comments(comments: list, database: list) -> dict:
+    normalized_database = [get_normalized_text(db) for db in database]
 
-    matches = {key : [] for key in normalized_database}
+    grouped_comments = {key : [] for key in normalized_database}
     for comment in comments:
         cleaned_comment = get_cleaned_comment(get_normalized_text(comment))
-        found = get_match(cleaned_comment, normalized_database)
+        found = get_closest_match(cleaned_comment, normalized_database)
         if found != '':
-            matches[found].append(comment)
-    return matches
+            grouped_comments[found].append(comment)
+    return grouped_comments
 
-def get_counts(matches: dict) -> dict:
-    return {key: len(values) for key, values in matches.items()}
+def get_counts(grouped_comments: dict) -> dict:
+    return {db: len(comments) for db, comments in grouped_comments.items()}
 
 def get_counts_df(counts: dict) -> pd.DataFrame:
     df = pd.DataFrame(counts, index=['Votes']).T
@@ -80,15 +80,15 @@ def get_counts_df(counts: dict) -> pd.DataFrame:
     return df
 
 def main():
-    file_data = open('../data/output-v2.txt','r')
+    file_data = open('../data/output-v3.txt','r')
     datas = file_data.read().splitlines()
 
     comments = get_comments(datas)
-    matches = get_matches(comments)
+    matches = get_grouped_comments(comments, DATABASE)
     counts = get_counts(matches)
     df_counts = get_counts_df(counts)
     print(df_counts)
-    #df_counts.to_excel("../data/occurences.xlsx")
+    # df_counts.to_excel("../data/occurences.xlsx")
 
 if __name__ == '__main__':
     main()
