@@ -22,11 +22,8 @@ export const signIn = async (page) => {
 
     await clickOnAcceptCookies(page)
 
-    await page.focus(emailBtnSelector)
-    await page.keyboard.type(login)
-
-    await page.focus(passwordBtnSelector)
-    await page.keyboard.type(password)
+    await page.$eval(emailBtnSelector, (el, login) => el.value = login, login)
+    await page.$eval(passwordBtnSelector, (el, password) => el.value = password, password)
 
     await page.click(submitBtnSelector)
 
