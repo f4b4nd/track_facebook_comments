@@ -1,5 +1,3 @@
-import { clickOnMoreComments } from "./userInteractions.js"
-
 export const waitFor = async (timeout = 2000) => (
     await new Promise(
         function(resolve) { setTimeout(resolve, timeout) }
@@ -12,20 +10,6 @@ export const logMessageAsync = (async (message) => {
         resolve()
     })
 })
-
-export const areNewCommentsLoaded = async (page, selector, initialCount) => {
-    const newCounterElement = await page.$x(selector)
-    const newCount = await newCounterElement[0].evaluate(e => e.innerText)
-
-    console.log(initialCount, newCount)
-    return await new Promise((resolve) => {
-        if (initialCount !== newCount) {
-            resolve()
-        }
-        waitFor()
-        areNewCommentsLoaded(page, selector, initialCount)
-    })
-}
 
 const getParsedComment = async (commentElement) => {
     return await commentElement.evaluate(e => (

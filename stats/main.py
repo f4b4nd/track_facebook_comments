@@ -88,7 +88,7 @@ def main():
     counts = get_counts(matches)
     df_counts = get_counts_df(counts)
     print(df_counts)
-    # df_counts.to_excel("../data/occurences.xlsx")
+    df_counts.to_excel("../data/occurences.xlsx")
 
 if __name__ == '__main__':
     main()

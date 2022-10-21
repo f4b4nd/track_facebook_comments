@@ -10,23 +10,12 @@ export const clickOnDisplayAllComments = async (page) => {
     await btnElement2[0].click()
 }
 
-export const clickOnMoreComments = async (page) => {
-    /*const selector = 'div[role="button"] > span > span[dir="auto"]'
-    await page.evaluate(() => {
-        const buttons = document.querySelectorAll(selector)
-        const lastButton = buttons.length > 0 ? buttons.length -1 : null
-        lastButton.click()
-    }, selector)
-    const element = await page.waitForSelector(selector)
-    await page.click(element)
-    */
-    
+export const clickOnMoreComments = async (page) => {    
     const btnSelector = '//span[@dir="auto" and contains(text(), "Voir plus de commentaires")]'
     await page.waitForXPath(btnSelector)
     const btnElement = await page.$x(btnSelector)
     //console.log('#btnEleemnt3', btnElement)
-    await btnElement[0].click()
-    
+    await btnElement[0].click()   
 }
 
 export const clickOnAcceptCookies = async (page) => {
@@ -56,31 +45,7 @@ export const scrollDown = async (page) => {
     const scrollerElement = await page.$x(`//*[contains(text(), "${text}")]/../..`)
 
     await scrollerElement[0].click()
+
     await page.evaluate(() => { window.scrollBy(0, document.body.scrollHeight)})
 
-    //await autoScroll(page)
-    //await page.keyboard.press("PageDown")
-}
-
-export const autoScroll = async (page) => {
-    await page.evaluate(async () => {
-        window.scrollBy(0, document.body.scrollHeight)
-        /*
-        await new Promise((resolve) => {
-            
-            let totalHeight = 0
-            const distance = 100
-            const timer = setInterval(() => {
-                const scrollHeight = document.body.scrollHeight
-                window.scrollBy(0, distance)
-                totalHeight += distance
-
-                if (totalHeight >= scrollHeight - window.innerHeight) {
-                    clearInterval(timer)
-                    resolve()
-                }
-            }, 100)
-        })
-        */
-    })
 }

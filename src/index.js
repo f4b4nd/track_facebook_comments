@@ -3,7 +3,7 @@ import puppeteer from "puppeteer"
 import { facebookPostUrl } from "./constants.js"
 import { writeFile } from "./fileManager.js"
 import { signIn } from "./authentification.js"
-import { getComments, waitFor, logMessageAsync, areNewCommentsLoaded } from "./main.js"
+import { getComments, waitFor, logMessageAsync } from "./main.js"
 import { clickOnAcceptCookies, clickOnDisplayAllComments, clickOnMoreComments, scrollDown } from "./userInteractions.js"
 
 const OUTPUT_PATH = './data/output-v0.txt'
@@ -45,15 +45,8 @@ async function crawlComments (page) {
         await scrollDown(page)
 
         //await waitFor(500)
-        const counterSelector = '//span[@dir="auto" and contains(text(), "Voir plus de commentaires")]/../../../..//span[contains(text(), " sur ")]'
-        const counterElement = await page.$x(counterSelector)
-        const initialCount = await counterElement[0].evaluate(e => e.innerText)
-        
         console.log('clicking on more comments...')
         await clickOnMoreComments(page)
-        await scrollDown(page)
-        await areNewCommentsLoaded(page, counterSelector, initialCount)
-
         await logMessageAsync('click on more comments ok')
 
         //await waitFor(500)
