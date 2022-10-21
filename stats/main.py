@@ -35,18 +35,20 @@ def get_cleaned_comment(text: str) -> str:
     return re.sub(regex, "", text.lower())
 
 def get_normalized_text(text, rules = {'à': 'a', 'é': 'e', 'è': 'e', 'ô': 'o', 'ü': 'u'}):
+    text = text.lower()
+
     if len(list(rules.keys())) == 0:
         return text
 
     regex = "|".join(list(rules.keys()))
-    if not re.search(regex, text.lower()):
+    if not re.search(regex, text):
         return text
 
     first_key = list(rules.keys())[0]
     target, replace_by = first_key, rules[first_key]
-    text = re.sub(target, replace_by, text.lower())
-    new_rules = {k: v for k, v in rules.items() if k!= first_key}
-    return get_normalized_text(text, new_rules)
+    text = re.sub(target, replace_by, text)
+    popped_rules = {k: v for k, v in rules.items() if k!= first_key}
+    return get_normalized_text(text, popped_rules)
 
 def get_comments(datas: list) -> list:
     get_second_column = lambda x: re.sub("^.*;", "", x)
@@ -78,15 +80,15 @@ def get_counts_df(counts: dict) -> pd.DataFrame:
     return df
 
 def main():
-    datas = open('../data/output-v2.txt','r')
-    datas = datas.read().splitlines()
+    file_data = open('../data/output-v2.txt','r')
+    datas = file_data.read().splitlines()
 
     comments = get_comments(datas)
     matches = get_matches(comments)
     counts = get_counts(matches)
     df_counts = get_counts_df(counts)
     print(df_counts)
-    #df_counts.to_excel("../data/occurences.xlsx")   
+    #df_counts.to_excel("../data/occurences.xlsx")
 
 if __name__ == '__main__':
     main()

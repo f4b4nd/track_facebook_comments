@@ -36,7 +36,7 @@ export const cleanText = async (textContent) => {
         .replaceAll(/;\d+;/gm, ";")
         .replaceAll(/Juliette\sCazenave;CITHEA;/gm, ";")
         .replaceAll(/;+/gm, ";")
-        .replaceAll(/^;\n/gm, "")
         .replaceAll(/(?<=;.*);/gm, " ") // all ; except first
+        .replaceAll(/^;\n|^\s+|\s+$/gm, "")
         + '\nJuliette Cazenave;CITHEA;'
 }

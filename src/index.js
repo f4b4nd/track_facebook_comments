@@ -6,7 +6,7 @@ import { signIn, acceptCookies} from "./session.js"
 
 import { getComments, waitFor, facebookPostUrl, setFilterToAllComments, clickOnMoreComments, scrollDown } from "./main.js"
 
-const OUTPUT_PATH = './data/output-t0.txt'
+const OUTPUT_PATH = './data/output-v2.txt'
 
 async function loop (page) {
     try {
@@ -36,7 +36,7 @@ async function main () {
 
     try {
 
-        // await signIn(page)
+        await signIn(page)
 
         await page.goto(facebookPostUrl, { waitUntil: 'domcontentloaded' })
 
